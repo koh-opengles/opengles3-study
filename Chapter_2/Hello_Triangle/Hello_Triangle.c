@@ -54,6 +54,7 @@ GLuint LoadShader ( GLenum type, const char *shaderSrc )
    GLint compiled;
 
    // Create the shader object
+    //glCreateShader:创建指定类型的新着色器对象
    shader = glCreateShader ( type );
 
    if ( shader == 0 )
@@ -62,12 +63,15 @@ GLuint LoadShader ( GLenum type, const char *shaderSrc )
    }
 
    // Load the shader source
+    //glShaderSource:将着色器源代码加载到着色器对象
    glShaderSource ( shader, 1, &shaderSrc, NULL );
 
    // Compile the shader
+    //glCompileShader:编译着色器
    glCompileShader ( shader );
 
    // Check the compile status
+    //glGetShaderiv:检测着色器的编译状态
    glGetShaderiv ( shader, GL_COMPILE_STATUS, &compiled );
 
    if ( !compiled )
@@ -80,12 +84,13 @@ GLuint LoadShader ( GLenum type, const char *shaderSrc )
       {
          char *infoLog = malloc ( sizeof ( char ) * infoLen );
 
+          //glGetShaderInfoLog:获取着色器的信息log，这边是错误信息
          glGetShaderInfoLog ( shader, infoLen, NULL, infoLog );
          esLogMessage ( "Error compiling shader:\n%s\n", infoLog );
 
          free ( infoLog );
       }
-
+       //glDeleteShader:删除着色器对象
       glDeleteShader ( shader );
       return 0;
    }
@@ -127,20 +132,23 @@ int Init ( ESContext *esContext )
    fragmentShader = LoadShader ( GL_FRAGMENT_SHADER, fShaderStr );
 
    // Create the program object
+    //glCreateProgram:创建一个程序对象
    programObject = glCreateProgram ( );
 
    if ( programObject == 0 )
    {
       return 0;
    }
-
+    //glAttachShader:将着色器对象连接到程序对象上
    glAttachShader ( programObject, vertexShader );
    glAttachShader ( programObject, fragmentShader );
 
    // Link the program
+    //glLinkProgram:链接程序
    glLinkProgram ( programObject );
 
    // Check the link status
+    //glGetProgramiv:检测程序对象的链接状态，检查错误
    glGetProgramiv ( programObject, GL_LINK_STATUS, &linked );
 
    if ( !linked )
@@ -152,13 +160,13 @@ int Init ( ESContext *esContext )
       if ( infoLen > 1 )
       {
          char *infoLog = malloc ( sizeof ( char ) * infoLen );
-
+          //glGetProgramInfoLog:获取程序信息log
          glGetProgramInfoLog ( programObject, infoLen, NULL, infoLog );
          esLogMessage ( "Error linking program:\n%s\n", infoLog );
 
          free ( infoLog );
       }
-
+       //glDeleteProgram:删除程序对象
       glDeleteProgram ( programObject );
       return FALSE;
    }
@@ -166,6 +174,7 @@ int Init ( ESContext *esContext )
    // Store the program object
    userData->programObject = programObject;
 
+    //glClearColor:清除颜色
    glClearColor ( 1.0f, 1.0f, 1.0f, 0.0f );
    return TRUE;
 }
