@@ -167,6 +167,7 @@ GLboolean ESUTIL_API esCreateWindow ( ESContext *esContext, const char *title, G
       return GL_FALSE;
    }
 
+    //eglGetDisplay:打开与EGL显示服务器的连接
    esContext->eglDisplay = eglGetDisplay( esContext->eglNativeDisplay );
    if ( esContext->eglDisplay == EGL_NO_DISPLAY )
    {
@@ -174,6 +175,7 @@ GLboolean ESUTIL_API esCreateWindow ( ESContext *esContext, const char *title, G
    }
 
    // Initialize EGL
+    //eglInitialize:初始化EGL,返回主版本号和次版本号
    if ( !eglInitialize ( esContext->eglDisplay, &majorVersion, &minorVersion ) )
    {
       return GL_FALSE;
@@ -197,6 +199,7 @@ GLboolean ESUTIL_API esCreateWindow ( ESContext *esContext, const char *title, G
       };
 
       // Choose config
+       //eglChooseConfig:查询底层窗口系统支持的所有EGL表面配置，让EGL推荐最佳配置
       if ( !eglChooseConfig ( esContext->eglDisplay, attribList, &config, 1, &numConfigs ) )
       {
          return GL_FALSE;
@@ -213,21 +216,25 @@ GLboolean ESUTIL_API esCreateWindow ( ESContext *esContext, const char *title, G
    // For Android, need to get the EGL_NATIVE_VISUAL_ID and set it using ANativeWindow_setBuffersGeometry
    {
       EGLint format = 0;
+       //eglGetConfigAttrib:查询EGLConfig相关的特定属性
       eglGetConfigAttrib ( esContext->eglDisplay, config, EGL_NATIVE_VISUAL_ID, &format );
       ANativeWindow_setBuffersGeometry ( esContext->eglNativeWindow, 0, 0, format );
    }
 #endif // ANDROID
 
    // Create a surface
+    //eglCreateWindowSurface:创建一个窗口
    esContext->eglSurface = eglCreateWindowSurface ( esContext->eglDisplay, config, 
                                                     esContext->eglNativeWindow, NULL );
 
+    //创建失败的话可以用eglGetError确定失败的原因
    if ( esContext->eglSurface == EGL_NO_SURFACE )
    {
       return GL_FALSE;
    }
 
    // Create a GL context
+    //eglCreateContext:创建一个上下文
    esContext->eglContext = eglCreateContext ( esContext->eglDisplay, config, 
                                               EGL_NO_CONTEXT, contextAttribs );
 
@@ -237,6 +244,7 @@ GLboolean ESUTIL_API esCreateWindow ( ESContext *esContext, const char *title, G
    }
 
    // Make the context current
+    //eglMakeCurrent:指定某个上下文为当前上下文
    if ( !eglMakeCurrent ( esContext->eglDisplay, esContext->eglSurface, 
                           esContext->eglSurface, esContext->eglContext ) )
    {
