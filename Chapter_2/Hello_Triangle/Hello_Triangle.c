@@ -174,7 +174,7 @@ int Init ( ESContext *esContext )
    // Store the program object
    userData->programObject = programObject;
 
-    //glClearColor:清除颜色
+    //glClearColor:清除指定颜色(1.0f, 1.0f, 1.0f, 0.0f)
    glClearColor ( 1.0f, 1.0f, 1.0f, 0.0f );
    return TRUE;
 }
@@ -191,25 +191,30 @@ void Draw ( ESContext *esContext )
                          };
 
    // Set the viewport
+    //glViewport:设置2D视图(原点坐标、宽高)
    glViewport ( 0, 0, esContext->width, esContext->height );
 
    // Clear the color buffer
+    //glClear:清楚颜色缓冲区
    glClear ( GL_COLOR_BUFFER_BIT );
 
    // Use the program object
+    //glUseProgram:绑定程序对象进行渲染
    glUseProgram ( userData->programObject );
 
    // Load the vertex data
+    //glVertexAttribPointer:加载顶点数组
    glVertexAttribPointer ( 0, 3, GL_FLOAT, GL_FALSE, 0, vVertices );
+    //glEnableVertexAttribArray:设置顶点属性数组可以访问(对应glDisableVertexAttribArray)
    glEnableVertexAttribArray ( 0 );
-
+    //glDrawArrays:绘制图元
    glDrawArrays ( GL_TRIANGLES, 0, 3 );
 }
 
 void Shutdown ( ESContext *esContext )
 {
    UserData *userData = esContext->userData;
-
+    //glDeleteProgram:删除程序对象
    glDeleteProgram ( userData->programObject );
 }
 
