@@ -81,7 +81,7 @@ GLuint LoadShader ( GLenum type, const char *shaderSrc )
          char *infoLog = malloc ( sizeof ( char ) * infoLen );
 
          glGetShaderInfoLog ( shader, infoLen, NULL, infoLog ); //hlp:获取具体的shader编译错误信息
-         esLogMessage ( "Error compiling shader:\n%s\n", infoLog );
+         esLogMessage ( "Error compiling shader:\n%s\n", infoLog ); //hlp:输出错误信息
 
          free ( infoLog );
       }
@@ -154,7 +154,7 @@ int Init ( ESContext *esContext )
          char *infoLog = malloc ( sizeof ( char ) * infoLen );
 
          glGetProgramInfoLog ( programObject, infoLen, NULL, infoLog );//hlp:如果有错误，那么获取具体的链接错误
-         esLogMessage ( "Error linking program:\n%s\n", infoLog );
+         esLogMessage ( "Error linking program:\n%s\n", infoLog );//hlp:输出错误信息
 
          free ( infoLog );
       }
