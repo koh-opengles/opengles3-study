@@ -62,30 +62,36 @@ GLuint LoadShader ( GLenum type, const char *shaderSrc )
    }
 
    // Load the shader source
+   // 加载shaser源代码
    glShaderSource ( shader, 1, &shaderSrc, NULL );
 
    // Compile the shader
+   // 编译shaser
    glCompileShader ( shader );
 
    // Check the compile status
+   //检测编译的结果，看是否有错
    glGetShaderiv ( shader, GL_COMPILE_STATUS, &compiled );
 
    if ( !compiled )
    {
       GLint infoLen = 0;
 
+      //获取出错信息的长度
       glGetShaderiv ( shader, GL_INFO_LOG_LENGTH, &infoLen );
 
       if ( infoLen > 1 )
       {
          char *infoLog = malloc ( sizeof ( char ) * infoLen );
 
+         //获取出错信息
          glGetShaderInfoLog ( shader, infoLen, NULL, infoLog );
          esLogMessage ( "Error compiling shader:\n%s\n", infoLog );
 
          free ( infoLog );
       }
 
+      //清除shader
       glDeleteShader ( shader );
       return 0;
    }
@@ -127,6 +133,7 @@ int Init ( ESContext *esContext )
    fragmentShader = LoadShader ( GL_FRAGMENT_SHADER, fShaderStr );
 
    // Create the program object
+   //创建程序
    programObject = glCreateProgram ( );
 
    if ( programObject == 0 )
@@ -134,31 +141,38 @@ int Init ( ESContext *esContext )
       return 0;
    }
 
+   //顶点着色器连接到程序
    glAttachShader ( programObject, vertexShader );
+   //片段着色器连接到程序
    glAttachShader ( programObject, fragmentShader );
 
    // Link the program
+   //链接程序
    glLinkProgram ( programObject );
 
    // Check the link status
+   //检测链接程序的结果
    glGetProgramiv ( programObject, GL_LINK_STATUS, &linked );
 
    if ( !linked )
    {
       GLint infoLen = 0;
 
+      //获取出错信息的长度
       glGetProgramiv ( programObject, GL_INFO_LOG_LENGTH, &infoLen );
 
       if ( infoLen > 1 )
       {
          char *infoLog = malloc ( sizeof ( char ) * infoLen );
 
+         //获取出错信息
          glGetProgramInfoLog ( programObject, infoLen, NULL, infoLog );
          esLogMessage ( "Error linking program:\n%s\n", infoLog );
 
          free ( infoLog );
       }
 
+      //清理程序
       glDeleteProgram ( programObject );
       return FALSE;
    }
@@ -166,6 +180,7 @@ int Init ( ESContext *esContext )
    // Store the program object
    userData->programObject = programObject;
 
+   //清除颜色缓冲区
    glClearColor ( 1.0f, 1.0f, 1.0f, 0.0f );
    return TRUE;
 }
@@ -182,18 +197,24 @@ void Draw ( ESContext *esContext )
                          };
 
    // Set the viewport
+   //设置视口
    glViewport ( 0, 0, esContext->width, esContext->height );
 
    // Clear the color buffer
+   //清除颜色缓冲区
    glClear ( GL_COLOR_BUFFER_BIT );
 
    // Use the program object
+   //使用程序
    glUseProgram ( userData->programObject );
 
    // Load the vertex data
+   //加载顶点数据到0号
    glVertexAttribPointer ( 0, 3, GL_FLOAT, GL_FALSE, 0, vVertices );
+   //使用顶点数组0号
    glEnableVertexAttribArray ( 0 );
 
+   //绘制图元
    glDrawArrays ( GL_TRIANGLES, 0, 3 );
 }
 
@@ -201,6 +222,7 @@ void Shutdown ( ESContext *esContext )
 {
    UserData *userData = esContext->userData;
 
+   //清理程序
    glDeleteProgram ( userData->programObject );
 }
 
@@ -208,6 +230,7 @@ int esMain ( ESContext *esContext )
 {
    esContext->userData = malloc ( sizeof ( UserData ) );
 
+   //创建Egl窗口
    esCreateWindow ( esContext, "Hello Triangle", 320, 240, ES_WINDOW_RGB );
 
    if ( !Init ( esContext ) )
@@ -215,7 +238,9 @@ int esMain ( ESContext *esContext )
       return GL_FALSE;
    }
 
+   //注册在关闭时的回调函数
    esRegisterShutdownFunc ( esContext, Shutdown );
+   //注册用于渲染每帧的绘图回调函数
    esRegisterDrawFunc ( esContext, Draw );
 
    return GL_TRUE;
