@@ -166,7 +166,7 @@ GLboolean ESUTIL_API esCreateWindow ( ESContext *esContext, const char *title, G
    {
       return GL_FALSE;
    }
-
+    //返回与默认原生显示的链接，用于检查
    esContext->eglDisplay = eglGetDisplay( esContext->eglNativeDisplay );
    if ( esContext->eglDisplay == EGL_NO_DISPLAY )
    {
@@ -174,6 +174,7 @@ GLboolean ESUTIL_API esCreateWindow ( ESContext *esContext, const char *title, G
    }
 
    // Initialize EGL
+    //初始化EGL 传入显示链接，可获取主版本号和次版本号
    if ( !eglInitialize ( esContext->eglDisplay, &majorVersion, &minorVersion ) )
    {
       return GL_FALSE;
@@ -197,6 +198,7 @@ GLboolean ESUTIL_API esCreateWindow ( ESContext *esContext, const char *title, G
       };
 
       // Choose config
+       //让EGL选择匹配的EGLConfig
       if ( !eglChooseConfig ( esContext->eglDisplay, attribList, &config, 1, &numConfigs ) )
       {
          return GL_FALSE;
@@ -219,6 +221,7 @@ GLboolean ESUTIL_API esCreateWindow ( ESContext *esContext, const char *title, G
 #endif // ANDROID
 
    // Create a surface
+    //创建一个后台缓冲区
    esContext->eglSurface = eglCreateWindowSurface ( esContext->eglDisplay, config, 
                                                     esContext->eglNativeWindow, NULL );
 
@@ -228,6 +231,7 @@ GLboolean ESUTIL_API esCreateWindow ( ESContext *esContext, const char *title, G
    }
 
    // Create a GL context
+    //创建一个EGL上下文
    esContext->eglContext = eglCreateContext ( esContext->eglDisplay, config, 
                                               EGL_NO_CONTEXT, contextAttribs );
 
@@ -237,6 +241,7 @@ GLboolean ESUTIL_API esCreateWindow ( ESContext *esContext, const char *title, G
    }
 
    // Make the context current
+    //指定当前上下文 显示连接、绘图表面、读取表面、指定连接到该表面的渲染上下文
    if ( !eglMakeCurrent ( esContext->eglDisplay, esContext->eglSurface, 
                           esContext->eglSurface, esContext->eglContext ) )
    {

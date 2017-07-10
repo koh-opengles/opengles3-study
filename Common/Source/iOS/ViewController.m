@@ -59,7 +59,7 @@ extern void esMain( ESContext *esContext );
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
+    //创建一个上下文
     self.context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES3];
 
     if (!self.context)
@@ -75,7 +75,8 @@ extern void esMain( ESContext *esContext );
 }
 
 - (void)dealloc
-{    
+{
+    //析构函数
     [self tearDownGL];
     
     if ([EAGLContext currentContext] == self.context) {
@@ -106,7 +107,7 @@ extern void esMain( ESContext *esContext );
     [EAGLContext setCurrentContext:self.context];
     
     memset( &_esContext, 0, sizeof( _esContext ) );
-  
+    //创建一个es上下文对象
     esMain( &_esContext );
 }
 

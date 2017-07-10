@@ -100,9 +100,11 @@ typedef struct ESContext ESContext;
 struct ESContext
 {
    /// Put platform specific data here
+    //平台数据
    void       *platformData;
 
    /// Put your user data here...
+    //用户数据
    void       *userData;
 
    /// Window width
